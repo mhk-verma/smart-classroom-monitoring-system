@@ -59,28 +59,43 @@ function animateCounter(element, target, duration = 1000) {
     requestAnimationFrame(update);
 }
 
-// Enhanced Performance Metrics Simulation
-function updatePerformanceMetrics() {
-    // Simulate CPU usage with realistic fluctuations
-    const cpuUsage = Math.floor(Math.random() * 20) + 8;
+// Enhanced Performance Metrics - Use real simulation data
+function updatePerformanceMetrics(deviceStatus) {
+    if (!deviceStatus) return;
+    
+    // Update CPU usage from simulation
+    const cpuUsage = deviceStatus.cpu_usage.toFixed(1);
     const cpuElement = document.getElementById('cpu-usage');
-    cpuElement.textContent = cpuUsage + '%';
-    cpuElement.parentElement.nextElementSibling.nextElementSibling.querySelector('.progress-fill').style.width = cpuUsage + '%';
+    if (cpuElement) {
+        cpuElement.textContent = cpuUsage + '%';
+        const cpuProgress = cpuElement.parentElement.nextElementSibling.nextElementSibling?.querySelector('.progress-fill');
+        if (cpuProgress) cpuProgress.style.width = cpuUsage + '%';
+    }
     
-    // Simulate memory usage
-    const memoryUsage = Math.floor(Math.random() * 15) + 40;
+    // Update memory usage from simulation
+    const memoryUsage = deviceStatus.memory_usage.toFixed(1);
     const memoryElement = document.getElementById('memory-usage');
-    memoryElement.textContent = memoryUsage + '%';
-    memoryElement.parentElement.nextElementSibling.querySelector('.progress-fill').style.width = memoryUsage + '%';
+    if (memoryElement) {
+        memoryElement.textContent = memoryUsage + '%';
+        const memoryProgress = memoryElement.parentElement.nextElementSibling?.querySelector('.progress-fill');
+        if (memoryProgress) memoryProgress.style.width = memoryUsage + '%';
+    }
     
-    // Update detection accuracy
-    const accuracy = (90 + Math.random() * 8).toFixed(1);
-    document.getElementById('detection-accuracy').textContent = accuracy + '%';
+    // Update device temperature
+    const deviceTemp = deviceStatus.device_temperature.toFixed(1);
+    const tempElement = document.getElementById('device-temperature');
+    if (tempElement) tempElement.textContent = deviceTemp + '°C';
+    
+    // Update network latency
+    const latency = deviceStatus.network_latency.toFixed(0);
+    const latencyElement = document.getElementById('network-latency');
+    if (latencyElement) latencyElement.textContent = latency + 'ms';
     
     // Update sync time
     const now = new Date();
     const timeString = now.toLocaleTimeString();
-    document.getElementById('sync-time').textContent = 'Last synchronized: ' + timeString;
+    const syncElement = document.getElementById('sync-time');
+    if (syncElement) syncElement.textContent = 'Last synchronized: ' + timeString;
 }
 
 // Initialize Premium Charts
@@ -240,6 +255,20 @@ function addLogEntry(message, type = 'info') {
     logEntries.push({ timestamp, message, type });
 }
 
+// Update Sensor Health Indicators
+function updateSensorHealth(sensorHealth) {
+    const sensors = ['dht22', 'pir', 'ldr', 'camera'];
+    
+    sensors.forEach(sensor => {
+        const element = document.getElementById(`${sensor}-status`);
+        if (element) {
+            const isOnline = sensorHealth[`${sensor}_online`];
+            element.textContent = isOnline ? 'ONLINE' : 'OFFLINE';
+            element.style.color = isOnline ? '#22c55e' : '#ef4444';
+        }
+    });
+}
+
 // Update Dashboard with Premium Animations
 function updateDashboard(data) {
     // Update occupancy status with premium transitions
@@ -336,6 +365,16 @@ function updateDashboard(data) {
     // Update automation display
     document.getElementById('automation-mode').textContent = data.auto_mode ? 'AUTO' : 'MANUAL';
     document.getElementById('automation-status').textContent = 'Running';
+    
+    // Update device status from simulation
+    if (data.device_status) {
+        updatePerformanceMetrics(data.device_status);
+    }
+    
+    // Update sensor health indicators
+    if (data.sensor_health) {
+        updateSensorHealth(data.sensor_health);
+    }
 
     // Update manual controls
     updateManualControls(data.auto_mode, data.light_on, data.fan_on);
@@ -519,9 +558,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add initial premium log entry
     addLogEntry('AI + IoT Command Center initialized successfully', 'success');
     showNotification('System Ready', 'Smart Classroom AI + IoT Command Center is online', 'success');
-
-    // Start enhanced performance metrics
-    performanceInterval = setInterval(updatePerformanceMetrics, 3000);
 
     // Fetch initial data
     fetchStatus();
