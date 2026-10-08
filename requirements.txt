@@ -1,0 +1,12 @@
+# Smart Classroom Monitoring System - Production Dependencies
+# For PythonAnywhere deployment
+
+# Web Framework
+Flask==3.0.0
+Werkzeug==3.0.1
+
+# Production Server
+gunicorn==21.2.0
+
+# No database dependencies needed (SQLite is built into Python)
+# Future stages will add: opencv-python, numpy, RPi.GPIO, adafruit-circuitpython-dht

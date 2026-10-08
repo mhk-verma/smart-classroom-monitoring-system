@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Smart Classroom Monitoring System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <!-- Notification Container -->
+    <div class="notification-container" id="notification-container"></div>
+
+    <header>
+        <div class="header-left">
+            <div class="header-title">Smart Classroom Monitoring</div>
+            <div class="header-subtitle">IoT • Computer Vision • Energy Automation</div>
+        </div>
+        <div class="header-right">
+            <div class="status-indicator">
+                <div class="status-dot online"></div>
+                <span>System Online</span>
+            </div>
+            <button class="theme-toggle" id="theme-toggle" title="Toggle Dark Mode">
+                <i data-lucide="moon"></i>
+            </button>
+            <div class="demo-badge {% if demo_mode %}active{% else %}inactive{% endif %}">
+                {% if demo_mode %}DEMO DATA{% else %}LIVE MODE{% endif %}
+            </div>
+        </div>
+    </header>
+
+    <nav>
+        <a href="/">Dashboard</a>
+        <a href="/analytics">Analytics</a>
+        <a href="/settings" class="active">Settings</a>
+    </nav>
+
+    <div class="container">
+        <main>
+            <div class="hero-section">
+                <h1 class="hero-title">System Settings</h1>
+                <p class="hero-subtitle">Configure automation thresholds and system parameters</p>
+            </div>
+            
+            <div class="settings-container">
+                <form id="settings-form" class="settings-form">
+                    <h2 class="section-header">Automation Settings</h2>
+                    
+                    <div class="form-group">
+                        <label for="occupancy-timeout">
+                            Occupancy Timeout (seconds)
+                            <span class="help-text">Time to wait before turning off appliances when room is empty</span>
+                        </label>
+                        <input type="number" id="occupancy-timeout" name="occupancy_timeout" 
+                               value="300" min="30" max="3600" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="temperature-threshold">
+                            Temperature Threshold (°C)
+                            <span class="help-text">Temperature above which fan should turn on in auto mode</span>
+                        </label>
+                        <input type="number" id="temperature-threshold" name="temperature_threshold" 
+                               value="28" min="15" max="45" step="0.5" required>
+                    </div>
+
+                    <h2 class="section-header">Sensor Settings</h2>
+
+                    <div class="form-group">
+                        <label for="sensor-interval">
+                            Sensor Read Interval (seconds)
+                            <span class="help-text">How often to read sensor values</span>
+                        </label>
+                        <input type="number" id="sensor-interval" name="sensor_interval" 
+                               value="5" min="1" max="60" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="detection-interval">
+                            Detection Interval (seconds)
+                            <span class="help-text">How often to run person detection</span>
+                        </label>
+                        <input type="number" id="detection-interval" name="detection_interval" 
+                               value="2" min="1" max="10" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confidence-threshold">
+                            Detection Confidence Threshold
+                            <span class="help-text">Minimum confidence for person detection (0.0 - 1.0)</span>
+                        </label>
+                        <input type="number" id="confidence-threshold" name="confidence_threshold" 
+                               value="0.5" min="0.1" max="1.0" step="0.1" required>
+                    </div>
+
+                    <h2 class="section-header">Appearance</h2>
+
+                    <div class="form-group">
+                        <label for="theme-preference">
+                            Theme Preference
+                            <span class="help-text">Choose your preferred color theme</span>
+                        </label>
+                        <select id="theme-preference" name="theme_preference">
+                            <option value="light">Light Mode</option>
+                            <option value="dark">Dark Mode</option>
+                            <option value="auto">Auto (System)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i data-lucide="save"></i>
+                            Save Settings
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="reset-btn">
+                            <i data-lucide="rotate-ccw"></i>
+                            Reset to Defaults
+                        </button>
+                    </div>
+                </form>
+
+                <div class="settings-info">
+                    <h2 class="section-header">Current Configuration</h2>
+                    
+                    <div class="config-display">
+                        <div class="config-item">
+                            <span class="config-label">Occupancy Timeout:</span>
+                            <span class="config-value" id="current-timeout">300s</span>
+                        </div>
+                        <div class="config-item">
+                            <span class="config-label">Temperature Threshold:</span>
+                            <span class="config-value" id="current-threshold">28°C</span>
+                        </div>
+                        <div class="config-item">
+                            <span class="config-label">Auto Mode:</span>
+                            <span class="config-value" id="current-auto">Enabled</span>
+                        </div>
+                        <div class="config-item">
+                            <span class="config-label">Theme:</span>
+                            <span class="config-value" id="current-theme">Light</span>
+                        </div>
+                    </div>
+
+                    <h2 class="section-header">System Status</h2>
+                    
+                    <div class="system-status">
+                        <div class="status-item">
+                            <span class="status-label">Demo Mode:</span>
+                            <span class="status-value {% if demo_mode %}demo-active{% endif %}">
+                                {% if demo_mode %}Active{% else %}Inactive{% endif %}
+                            </span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">Database:</span>
+                            <span class="status-value text-green">Connected</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">Camera:</span>
+                            <span class="status-value">
+                                {% if demo_mode %}Simulated{% else %}Not Connected{% endif %}
+                            </span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">Sensors:</span>
+                            <span class="status-value text-green">Healthy</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">System Version:</span>
+                            <span class="status-value">1.0.0</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">Last Update:</span>
+                            <span class="status-value" id="settings-last-update">--</span>
+                        </div>
+                    </div>
+
+                    <h2 class="section-header">Quick Actions</h2>
+                    
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="export-btn" id="export-settings-btn">
+                            <i data-lucide="download"></i>
+                            Export Settings
+                        </button>
+                        <button class="export-btn" id="import-settings-btn">
+                            <i data-lucide="upload"></i>
+                            Import Settings
+                        </button>
+                        <button class="export-btn" id="clear-logs-btn" style="background: var(--color-red);">
+                            <i data-lucide="trash-2"></i>
+                            Clear Logs
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer>
+        <p>Smart Classroom Monitoring System • B.Tech CSE/IT Minor Project</p>
+    </footer>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+    <script src="{{ url_for('static', filename='js/settings.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Classroom Monitoring System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Notification Container -->
+    <div class="notification-container" id="notification-container"></div>
+
+    <header>
+        <div class="header-left">
+            <div class="header-title">Smart Classroom Monitoring</div>
+            <div class="header-subtitle">IoT • Computer Vision • Energy Automation</div>
+        </div>
+        <div class="header-right">
+            <div class="status-indicator">
+                <div class="status-dot online"></div>
+                <span>System Online</span>
+            </div>
+            <button class="theme-toggle" id="theme-toggle" title="Toggle Dark Mode">
+                <i data-lucide="moon"></i>
+            </button>
+            <div class="demo-badge {% if demo_mode %}active{% else %}inactive{% endif %}">
+                {% if demo_mode %}DEMO DATA{% else %}LIVE MODE{% endif %}
+            </div>
+        </div>
+    </header>
+
+    <nav>
+        <a href="/" class="active">Dashboard</a>
+        <a href="/analytics">Analytics</a>
+        <a href="/settings">Settings</a>
+    </nav>
+
+    <div class="container">
+        <main>
+            <!-- Hero Section -->
+            <div class="hero-section">
+                <h1 class="hero-title">Classroom Monitoring Dashboard</h1>
+                <p class="hero-subtitle">Real-time occupancy, environmental monitoring and energy automation</p>
+                <div class="hero-status">
+                    <div class="hero-status-item">
+                        <div class="status-dot online"></div>
+                        <span>Raspberry Pi: Connected</span>
+                    </div>
+                    <div class="hero-status-item">
+                        <div class="status-dot {% if demo_mode %}warning{% else %}online{% endif %}"></div>
+                        <span>Camera: {% if demo_mode %}Simulated{% else %}Connected{% endif %}</span>
+                    </div>
+                    <div class="hero-status-item">
+                        <div class="status-dot online"></div>
+                        <span>Sensors: Healthy</span>
+                    </div>
+                    <div class="hero-status-item">
+                        <div class="status-dot online"></div>
+                        <span>Automation: Active</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Performance Metrics -->
+            <div class="performance-grid">
+                <div class="performance-card">
+                    <div class="performance-label">CPU Usage</div>
+                    <div class="performance-value" id="cpu-usage">12%</div>
+                    <div class="performance-bar">
+                        <div class="performance-fill" style="width: 12%"></div>
+                    </div>
+                </div>
+                <div class="performance-card">
+                    <div class="performance-label">Memory Usage</div>
+                    <div class="performance-value" id="memory-usage">45%</div>
+                    <div class="performance-bar">
+                        <div class="performance-fill" style="width: 45%"></div>
+                    </div>
+                </div>
+                <div class="performance-card">
+                    <div class="performance-label">Network</div>
+                    <div class="performance-value" id="network-speed">1.2 Mbps</div>
+                    <div class="performance-bar">
+                        <div class="performance-fill" style="width: 24%"></div>
+                    </div>
+                </div>
+                <div class="performance-card">
+                    <div class="performance-label">Uptime</div>
+                    <div class="performance-value" id="uptime">2h 15m</div>
+                    <div class="performance-bar">
+                        <div class="performance-fill" style="width: 85%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Camera Feed Placeholder -->
+            <div class="camera-feed">
+                <div class="camera-recording">
+                    <div class="rec-dot"></div>
+                    <span>REC</span>
+                </div>
+                <div class="camera-placeholder">
+                    <i data-lucide="camera"></i>
+                    <p>Camera Feed - {% if demo_mode %}Simulated{% else %}Live{% endif %}</p>
+                    <small>Person Detection Active</small>
+                </div>
+            </div>
+
+            <!-- Status Cards -->
+            <div class="status-grid">
+                <!-- Occupancy Card -->
+                <div class="card {% if demo_state['occupied'] %}occupied{% else %}unoccupied{% endif %}" id="occupancy-card">
+                    <div class="card-header">
+                        <div class="card-title">Occupancy Status</div>
+                        <div class="card-icon green">
+                            <i data-lucide="users"></i>
+                        </div>
+                    </div>
+                    <div class="card-value" id="occupancy-status">Loading...</div>
+                    <div class="card-secondary">
+                        <span id="people-count">-</span> people detected
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="occupancy-progress" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Temperature Card -->
+                <div class="card cyan" id="temperature-card">
+                    <div class="card-header">
+                        <div class="card-title">Temperature</div>
+                        <div class="card-icon">
+                            <i data-lucide="thermometer"></i>
+                        </div>
+                    </div>
+                    <div class="card-value"><span id="temperature">--</span>°C</div>
+                    <div class="card-secondary" id="temp-status">Normal</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="temperature-progress" style="width: 50%"></div>
+                    </div>
+                </div>
+
+                <!-- Humidity Card -->
+                <div class="card cyan" id="humidity-card">
+                    <div class="card-header">
+                        <div class="card-title">Humidity</div>
+                        <div class="card-icon">
+                            <i data-lucide="droplets"></i>
+                        </div>
+                    </div>
+                    <div class="card-value"><span id="humidity">--</span>%</div>
+                    <div class="card-secondary">Environmental</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="humidity-progress" style="width: 60%"></div>
+                    </div>
+                </div>
+
+                <!-- PIR Motion Card -->
+                <div class="card" id="pir-card">
+                    <div class="card-header">
+                        <div class="card-title">PIR Motion</div>
+                        <div class="card-icon">
+                            <i data-lucide="activity"></i>
+                        </div>
+                    </div>
+                    <div class="card-value" id="pir-status">--</div>
+                    <div class="card-secondary">Motion Sensor</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="pir-progress" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Light Status Card -->
+                <div class="card {% if demo_state['light_on'] %}green{% endif %}" id="light-card">
+                    <div class="card-header">
+                        <div class="card-title">Light Status</div>
+                        <div class="card-icon {% if demo_state['light_on'] %}green{% endif %}">
+                            <i data-lucide="lightbulb"></i>
+                        </div>
+                    </div>
+                    <div class="card-value" id="light-status">--</div>
+                    <div class="card-secondary">
+                        <span class="mode-badge {% if demo_state['auto_mode'] %}auto{% else %}manual{% endif %}" id="light-mode">
+                            {% if demo_state['auto_mode'] %}AUTO{% else %}MANUAL{% endif %}
+                        </span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="light-progress" style="width: {% if demo_state['light_on'] %}100{% else %}0{% endif %}%"></div>
+                    </div>
+                </div>
+
+                <!-- Fan Status Card -->
+                <div class="card {% if demo_state['fan_on'] %}green{% endif %}" id="fan-card">
+                    <div class="card-header">
+                        <div class="card-title">Fan Status</div>
+                        <div class="card-icon {% if demo_state['fan_on'] %}green{% endif %}">
+                            <i data-lucide="fan"></i>
+                        </div>
+                    </div>
+                    <div class="card-value" id="fan-status">--</div>
+                    <div class="card-secondary">
+                        <span class="mode-badge {% if demo_state['auto_mode'] %}auto{% else %}manual{% endif %}" id="fan-mode">
+                            {% if demo_state['auto_mode'] %}AUTO{% else %}MANUAL{% endif %}
+                        </span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="fan-progress" style="width: {% if demo_state['fan_on'] %}100{% else %}0{% endif %}%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Automation Control -->
+            <div class="automation-section">
+                <h2 class="section-header">Automation Control</h2>
+                <div class="control-panel">
+                    <div class="control-row">
+                        <span class="control-label">Auto Mode</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="auto-mode-toggle" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="control-row" id="manual-light-control">
+                        <span class="control-label">Light Control</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="light-toggle" {% if demo_state['auto_mode'] %}disabled{% endif %}>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="control-row" id="manual-fan-control">
+                        <span class="control-label">Fan Control</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="fan-toggle" {% if demo_state['auto_mode'] %}disabled{% endif %}>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Energy Statistics -->
+            <div class="energy-section">
+                <h2 class="section-header">Energy Statistics</h2>
+                <div class="energy-grid">
+                    <div class="energy-card">
+                        <h3>Estimated Energy Saved</h3>
+                        <div class="energy-value"><span id="energy-saved">0.000</span></div>
+                        <div class="energy-unit">kWh</div>
+                    </div>
+                    <div class="energy-card">
+                        <h3>Light Runtime</h3>
+                        <div class="energy-value"><span id="light-runtime">0</span></div>
+                        <div class="energy-unit">minutes</div>
+                    </div>
+                    <div class="energy-card">
+                        <h3>Fan Runtime</h3>
+                        <div class="energy-value"><span id="fan-runtime">0</span></div>
+                        <div class="energy-unit">minutes</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Real-time Charts -->
+            <div class="charts-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-lg);">
+                    <h2 class="section-header" style="margin-bottom: 0;">Real-time Monitoring</h2>
+                    <button class="export-btn" id="export-data-btn">
+                        <i data-lucide="download"></i>
+                        Export Data
+                    </button>
+                </div>
+                <div class="charts-grid">
+                    <div class="chart-container">
+                        <canvas id="temperatureChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="humidityChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- System Logs -->
+            <div class="logs-section">
+                <h2 class="section-header">System Logs</h2>
+                <div class="logs-container" id="system-logs">
+                    <div class="log-entry">
+                        <span class="log-timestamp">System initialized</span>
+                        <span>Smart Classroom Monitoring System started</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- System Information -->
+            <div class="system-info">
+                <h2 class="section-header">System Information</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">Last Update:</span>
+                        <span class="info-value" id="last-update">--</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Empty Room Timer:</span>
+                        <span class="info-value" id="empty-timer">0s</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Automation Mode:</span>
+                        <span class="info-value" id="mode-display">Auto</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">System Status:</span>
+                        <span class="info-value text-green">Online</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Detection Accuracy:</span>
+                        <span class="info-value" id="detection-accuracy">94.5%</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Response Time:</span>
+                        <span class="info-value" id="response-time">45ms</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer>
+        <p>Smart Classroom Monitoring System • B.Tech CSE/IT Minor Project</p>
+    </footer>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>
