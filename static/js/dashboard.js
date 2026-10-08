@@ -1,4 +1,4 @@
-// Advanced Dashboard JavaScript for Smart Classroom Monitoring System
+// Premium AI + IoT Command Center JavaScript
 
 let temperatureChart, humidityChart;
 let autoMode = true;
@@ -6,34 +6,12 @@ let logEntries = [];
 let notificationCounter = 0;
 let performanceInterval;
 
-// Theme Management
+// Theme Management (Dark mode only for premium feel)
 function initTheme() {
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    document.documentElement.setAttribute('data-theme', savedTheme);
-    updateThemeIcon(savedTheme);
+    document.documentElement.setAttribute('data-theme', 'dark');
 }
 
-function toggleTheme() {
-    const currentTheme = document.documentElement.getAttribute('data-theme');
-    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-    document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
-    updateThemeIcon(newTheme);
-    showNotification('Theme Changed', `Switched to ${newTheme} mode`, 'success');
-}
-
-function updateThemeIcon(theme) {
-    const themeToggle = document.getElementById('theme-toggle');
-    const icon = themeToggle.querySelector('i');
-    if (theme === 'dark') {
-        icon.setAttribute('data-lucide', 'sun');
-    } else {
-        icon.setAttribute('data-lucide', 'moon');
-    }
-    lucide.createIcons();
-}
-
-// Notification System
+// Notification System with Premium Styling
 function showNotification(title, message, type = 'info') {
     const container = document.getElementById('notification-container');
     const notification = document.createElement('div');
@@ -41,32 +19,22 @@ function showNotification(title, message, type = 'info') {
     notification.id = `notification-${notificationCounter++}`;
     
     notification.innerHTML = `
-        <div class="notification-content">
-            <div class="notification-title">${title}</div>
-            <div class="notification-message">${message}</div>
-        </div>
-        <button class="notification-close" onclick="closeNotification('${notification.id}')">×</button>
+        <div style="font-weight: 600; margin-bottom: 4px;">${title}</div>
+        <div style="font-size: 12px; opacity: 0.8;">${message}</div>
     `;
     
     container.appendChild(notification);
     
     // Auto-remove after 5 seconds
     setTimeout(() => {
-        closeNotification(notification.id);
-    }, 5000);
-}
-
-function closeNotification(notificationId) {
-    const notification = document.getElementById(notificationId);
-    if (notification) {
-        notification.style.animation = 'slideInRight 0.3s ease reverse';
+        notification.style.animation = 'slideIn 0.3s ease reverse';
         setTimeout(() => {
             notification.remove();
         }, 300);
-    }
+    }, 5000);
 }
 
-// Animated Counter
+// Advanced Counter Animation
 function animateCounter(element, target, duration = 1000) {
     const start = 0;
     const startTime = performance.now();
@@ -77,62 +45,53 @@ function animateCounter(element, target, duration = 1000) {
         
         // Easing function
         const easeOutQuart = 1 - Math.pow(1 - progress, 4);
-        const current = Math.floor(start + (target - start) * easeOutQuart);
+        const current = start + (target - start) * easeOutQuart;
         
-        element.textContent = current;
+        element.textContent = current.toFixed(1);
         
         if (progress < 1) {
             requestAnimationFrame(update);
         } else {
-            element.textContent = target;
+            element.textContent = target.toFixed(1);
         }
     }
     
     requestAnimationFrame(update);
 }
 
-// Performance Metrics Simulation
+// Enhanced Performance Metrics Simulation
 function updatePerformanceMetrics() {
-    // Simulate CPU usage
-    const cpuUsage = Math.floor(Math.random() * 30) + 10;
-    document.getElementById('cpu-usage').textContent = cpuUsage + '%';
-    document.querySelector('#cpu-usage').nextElementSibling.querySelector('.performance-fill').style.width = cpuUsage + '%';
+    // Simulate CPU usage with realistic fluctuations
+    const cpuUsage = Math.floor(Math.random() * 20) + 8;
+    const cpuElement = document.getElementById('cpu-usage');
+    cpuElement.textContent = cpuUsage + '%';
+    cpuElement.parentElement.nextElementSibling.nextElementSibling.querySelector('.progress-fill').style.width = cpuUsage + '%';
     
     // Simulate memory usage
-    const memoryUsage = Math.floor(Math.random() * 20) + 40;
-    document.getElementById('memory-usage').textContent = memoryUsage + '%';
-    document.querySelector('#memory-usage').nextElementSibling.querySelector('.performance-fill').style.width = memoryUsage + '%';
+    const memoryUsage = Math.floor(Math.random() * 15) + 40;
+    const memoryElement = document.getElementById('memory-usage');
+    memoryElement.textContent = memoryUsage + '%';
+    memoryElement.parentElement.nextElementSibling.querySelector('.progress-fill').style.width = memoryUsage + '%';
     
-    // Simulate network speed
-    const networkSpeed = (Math.random() * 2 + 0.5).toFixed(1);
-    document.getElementById('network-speed').textContent = networkSpeed + ' Mbps';
-    document.querySelector('#network-speed').nextElementSibling.querySelector('.performance-fill').style.width = (networkSpeed / 5 * 100) + '%';
+    // Update detection accuracy
+    const accuracy = (90 + Math.random() * 8).toFixed(1);
+    document.getElementById('detection-accuracy').textContent = accuracy + '%';
     
-    // Update uptime
-    const uptimeElement = document.getElementById('uptime');
-    const currentUptime = uptimeElement.textContent;
-    // Simple uptime increment simulation
-    const uptimeMatch = currentUptime.match(/(\d+)h (\d+)m/);
-    if (uptimeMatch) {
-        let hours = parseInt(uptimeMatch[1]);
-        let minutes = parseInt(uptimeMatch[2]);
-        minutes += 1;
-        if (minutes >= 60) {
-            minutes = 0;
-            hours += 1;
-        }
-        uptimeElement.textContent = `${hours}h ${minutes}m`;
-    }
+    // Update sync time
+    const now = new Date();
+    const timeString = now.toLocaleTimeString();
+    document.getElementById('sync-time').textContent = 'Last synchronized: ' + timeString;
 }
 
-// Initialize charts with professional colors
+// Initialize Premium Charts
 function initCharts() {
     const tempCtx = document.getElementById('temperatureChart').getContext('2d');
     const humidityCtx = document.getElementById('humidityChart').getContext('2d');
 
-    // Chart.js global defaults for professional appearance
+    // Premium Chart.js Configuration
     Chart.defaults.font.family = "'Inter', system-ui, sans-serif";
-    Chart.defaults.color = '#64748B';
+    Chart.defaults.color = '#94a3b8';
+    Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.1)';
 
     temperatureChart = new Chart(tempCtx, {
         type: 'line',
@@ -141,15 +100,15 @@ function initCharts() {
             datasets: [{
                 label: 'Temperature (°C)',
                 data: [],
-                borderColor: '#06B6D4',
-                backgroundColor: 'rgba(6, 182, 212, 0.1)',
+                borderColor: '#00d4ff',
+                backgroundColor: 'rgba(0, 212, 255, 0.1)',
                 fill: true,
                 tension: 0.4,
                 borderWidth: 2,
                 pointRadius: 3,
                 pointHoverRadius: 5,
-                pointBackgroundColor: '#06B6D4',
-                pointBorderColor: '#FFFFFF',
+                pointBackgroundColor: '#00d4ff',
+                pointBorderColor: '#ffffff',
                 pointBorderWidth: 2
             }]
         },
@@ -163,17 +122,14 @@ function initCharts() {
                     labels: {
                         usePointStyle: true,
                         padding: 20,
-                        font: {
-                            size: 12,
-                            weight: '500'
-                        }
+                        font: { size: 12, weight: '500' }
                     }
                 },
                 tooltip: {
-                    backgroundColor: 'rgba(15, 23, 42, 0.9)',
-                    titleColor: '#FFFFFF',
-                    bodyColor: '#FFFFFF',
-                    borderColor: '#06B6D4',
+                    backgroundColor: 'rgba(10, 14, 23, 0.9)',
+                    titleColor: '#f8fafc',
+                    bodyColor: '#f8fafc',
+                    borderColor: '#00d4ff',
                     borderWidth: 1,
                     cornerRadius: 8,
                     padding: 12
@@ -184,24 +140,12 @@ function initCharts() {
                     beginAtZero: false,
                     min: 15,
                     max: 40,
-                    grid: {
-                        color: '#E2E8F0'
-                    },
-                    ticks: {
-                        font: {
-                            size: 11
-                        }
-                    }
+                    grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                    ticks: { font: { size: 11 } }
                 },
                 x: {
-                    grid: {
-                        display: false
-                    },
-                    ticks: {
-                        font: {
-                            size: 11
-                        }
-                    }
+                    grid: { display: false },
+                    ticks: { font: { size: 11 } }
                 }
             },
             animation: {
@@ -218,15 +162,15 @@ function initCharts() {
             datasets: [{
                 label: 'Humidity (%)',
                 data: [],
-                borderColor: '#3B82F6',
-                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                borderColor: '#a855f7',
+                backgroundColor: 'rgba(168, 85, 247, 0.1)',
                 fill: true,
                 tension: 0.4,
                 borderWidth: 2,
                 pointRadius: 3,
                 pointHoverRadius: 5,
-                pointBackgroundColor: '#3B82F6',
-                pointBorderColor: '#FFFFFF',
+                pointBackgroundColor: '#a855f7',
+                pointBorderColor: '#ffffff',
                 pointBorderWidth: 2
             }]
         },
@@ -240,17 +184,14 @@ function initCharts() {
                     labels: {
                         usePointStyle: true,
                         padding: 20,
-                        font: {
-                            size: 12,
-                            weight: '500'
-                        }
+                        font: { size: 12, weight: '500' }
                     }
                 },
                 tooltip: {
-                    backgroundColor: 'rgba(15, 23, 42, 0.9)',
-                    titleColor: '#FFFFFF',
-                    bodyColor: '#FFFFFF',
-                    borderColor: '#3B82F6',
+                    backgroundColor: 'rgba(10, 14, 23, 0.9)',
+                    titleColor: '#f8fafc',
+                    bodyColor: '#f8fafc',
+                    borderColor: '#a855f7',
                     borderWidth: 1,
                     cornerRadius: 8,
                     padding: 12
@@ -261,24 +202,12 @@ function initCharts() {
                     beginAtZero: false,
                     min: 30,
                     max: 90,
-                    grid: {
-                        color: '#E2E8F0'
-                    },
-                    ticks: {
-                        font: {
-                            size: 11
-                        }
-                    }
+                    grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                    ticks: { font: { size: 11 } }
                 },
                 x: {
-                    grid: {
-                        display: false
-                    },
-                    ticks: {
-                        font: {
-                            size: 11
-                        }
-                    }
+                    grid: { display: false },
+                    ticks: { font: { size: 11 } }
                 }
             },
             animation: {
@@ -289,7 +218,7 @@ function initCharts() {
     });
 }
 
-// Add system log entry
+// Add Premium System Log Entry
 function addLogEntry(message, type = 'info') {
     const timestamp = new Date().toLocaleTimeString();
     const logContainer = document.getElementById('system-logs');
@@ -311,9 +240,9 @@ function addLogEntry(message, type = 'info') {
     logEntries.push({ timestamp, message, type });
 }
 
-// Update dashboard with current status
+// Update Dashboard with Premium Animations
 function updateDashboard(data) {
-    // Update occupancy status
+    // Update occupancy status with premium transitions
     const occupancyCard = document.getElementById('occupancy-card');
     const occupancyStatus = document.getElementById('occupancy-status');
     const peopleCount = document.getElementById('people-count');
@@ -325,27 +254,29 @@ function updateDashboard(data) {
         occupancyCard.classList.add('occupied');
         occupancyCard.classList.remove('unoccupied');
         occupancyStatus.textContent = 'OCCUPIED';
+        occupancyStatus.style.color = '#22c55e';
         peopleCount.textContent = data.people_detected;
         occupancyProgress.style.width = '100%';
         
         if (!previousOccupied) {
-            addLogEntry(`Classroom marked OCCUPIED - ${data.people_detected} people detected`, 'success');
+            addLogEntry(`AI Detection: ${data.people_detected} occupants identified`, 'success');
             showNotification('Occupancy Detected', `${data.people_detected} people detected in classroom`, 'success');
         }
     } else {
         occupancyCard.classList.add('unoccupied');
         occupancyCard.classList.remove('occupied');
         occupancyStatus.textContent = 'UNOCCUPIED';
+        occupancyStatus.style.color = '#64748b';
         peopleCount.textContent = '0';
         occupancyProgress.style.width = '0%';
         
         if (previousOccupied) {
-            addLogEntry('Classroom marked UNOCCUPIED', 'info');
+            addLogEntry('AI Detection: Classroom unoccupied', 'info');
             showNotification('Room Empty', 'Classroom is now unoccupied', 'info');
         }
     }
 
-    // Update temperature with animation
+    // Update temperature with premium animation
     const tempValue = data.temperature.toFixed(1);
     const tempElement = document.getElementById('temperature');
     animateCounter(tempElement, Math.round(data.temperature), 500);
@@ -354,22 +285,19 @@ function updateDashboard(data) {
     const tempStatus = document.getElementById('temp-status');
     const tempProgress = document.getElementById('temperature-progress');
     
-    // Calculate temperature progress (15-40 range)
     const tempProgressValue = ((data.temperature - 15) / 25) * 100;
     tempProgress.style.width = `${Math.max(0, Math.min(100, tempProgressValue))}%`;
     
     if (data.temperature > 28) {
-        tempCard.classList.add('warning');
-        tempCard.classList.remove('cyan');
-        tempStatus.textContent = 'High';
-        tempStatus.classList.add('text-amber');
-        tempProgress.style.background = 'linear-gradient(90deg, #F59E0B, #EF4444)';
+        tempCard.style.borderColor = '#f59e0b';
+        tempStatus.textContent = 'HIGH';
+        tempStatus.style.color = '#f59e0b';
+        tempProgress.style.background = 'linear-gradient(90deg, #f59e0b, #ef4444)';
     } else {
-        tempCard.classList.remove('warning');
-        tempCard.classList.add('cyan');
-        tempStatus.textContent = 'Normal';
-        tempStatus.classList.remove('text-amber');
-        tempProgress.style.background = 'linear-gradient(90deg, #06B6D4, #22C55E)';
+        tempCard.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+        tempStatus.textContent = 'NORMAL';
+        tempStatus.style.color = '#94a3b8';
+        tempProgress.style.background = 'linear-gradient(90deg, #00d4ff, #a855f7)';
     }
 
     // Update humidity with animation
@@ -386,13 +314,13 @@ function updateDashboard(data) {
     
     if (data.pir_motion) {
         pirStatus.textContent = 'DETECTED';
-        pirCard.classList.add('green');
-        pirCard.classList.remove('unoccupied');
+        pirStatus.style.color = '#22c55e';
+        pirCard.style.borderColor = 'rgba(34, 197, 94, 0.3)';
         pirProgress.style.width = '100%';
     } else {
         pirStatus.textContent = 'NO MOTION';
-        pirCard.classList.remove('green');
-        pirCard.classList.add('unoccupied');
+        pirStatus.style.color = '#64748b';
+        pirCard.style.borderColor = 'rgba(255, 255, 255, 0.1)';
         pirProgress.style.width = '0%';
     }
 
@@ -404,6 +332,10 @@ function updateDashboard(data) {
     const autoModeToggle = document.getElementById('auto-mode-toggle');
     autoModeToggle.checked = data.auto_mode;
     autoMode = data.auto_mode;
+    
+    // Update automation display
+    document.getElementById('automation-mode').textContent = data.auto_mode ? 'AUTO' : 'MANUAL';
+    document.getElementById('automation-status').textContent = 'Running';
 
     // Update manual controls
     updateManualControls(data.auto_mode, data.light_on, data.fan_on);
@@ -421,13 +353,9 @@ function updateDashboard(data) {
     document.getElementById('last-update').textContent = data.last_update;
     document.getElementById('empty-timer').textContent = data.empty_room_timer + 's';
     document.getElementById('mode-display').textContent = data.auto_mode ? 'Auto' : 'Manual';
-    
-    // Update advanced metrics
-    document.getElementById('detection-accuracy').textContent = (90 + Math.random() * 9).toFixed(1) + '%';
-    document.getElementById('response-time').textContent = Math.floor(30 + Math.random() * 40) + 'ms';
 }
 
-// Update appliance status display
+// Update Appliance Status with Premium Styling
 function updateApplianceStatus(appliance, isOn, isAuto) {
     const card = document.getElementById(`${appliance}-card`);
     const status = document.getElementById(`${appliance}-status`);
@@ -436,23 +364,24 @@ function updateApplianceStatus(appliance, isOn, isAuto) {
     const progress = document.getElementById(`${appliance}-progress`);
     
     status.textContent = isOn ? 'ON' : 'OFF';
+    status.style.color = isOn ? '#22c55e' : '#64748b';
     progress.style.width = isOn ? '100%' : '0%';
     
     if (isOn) {
-        card.classList.add('green');
-        card.classList.remove('unoccupied');
-        icon.classList.add('green');
+        card.style.borderColor = 'rgba(34, 197, 94, 0.3)';
+        icon.style.color = '#22c55e';
+        icon.style.background = 'rgba(34, 197, 94, 0.1)';
     } else {
-        card.classList.remove('green');
-        card.classList.add('unoccupied');
-        icon.classList.remove('green');
+        card.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+        icon.style.color = '#00d4ff';
+        icon.style.background = 'rgba(255, 255, 255, 0.05)';
     }
     
     modeBadge.textContent = isAuto ? 'AUTO' : 'MANUAL';
     modeBadge.className = `mode-badge ${isAuto ? 'auto' : 'manual'}`;
 }
 
-// Update manual controls state
+// Update Manual Controls with Premium Styling
 function updateManualControls(isAuto, lightOn, fanOn) {
     const lightToggle = document.getElementById('light-toggle');
     const fanToggle = document.getElementById('fan-toggle');
@@ -475,20 +404,18 @@ function updateManualControls(isAuto, lightOn, fanOn) {
     }
 }
 
-// Update charts with historical data
+// Update Charts with Premium Styling
 function updateCharts(data) {
-    // Update temperature chart
     temperatureChart.data.labels = data.timestamps;
     temperatureChart.data.datasets[0].data = data.temperature;
     temperatureChart.update('none');
 
-    // Update humidity chart
     humidityChart.data.labels = data.timestamps;
     humidityChart.data.datasets[0].data = data.humidity;
     humidityChart.update('none');
 }
 
-// Export functionality
+// Export Functionality
 function exportData() {
     const data = {
         timestamp: new Date().toISOString(),
@@ -509,8 +436,7 @@ function exportData() {
         performance_metrics: {
             cpu_usage: document.getElementById('cpu-usage').textContent,
             memory_usage: document.getElementById('memory-usage').textContent,
-            network_speed: document.getElementById('network-speed').textContent,
-            uptime: document.getElementById('uptime').textContent
+            detection_accuracy: document.getElementById('detection-accuracy').textContent
         },
         logs: logEntries
     };
@@ -521,7 +447,7 @@ function exportData() {
     
     const link = document.createElement('a');
     link.href = url;
-    link.download = `smart-classroom-data-${new Date().toISOString().split('T')[0]}.json`;
+    link.download = `smart-classroom-ai-data-${new Date().toISOString().split('T')[0]}.json`;
     link.click();
     
     URL.revokeObjectURL(url);
@@ -530,7 +456,7 @@ function exportData() {
     addLogEntry('System data exported successfully', 'success');
 }
 
-// Fetch current status from API
+// Fetch Status API
 async function fetchStatus() {
     try {
         const response = await fetch('/api/status');
@@ -543,7 +469,7 @@ async function fetchStatus() {
     }
 }
 
-// Fetch historical data from API
+// Fetch Historical Data API
 async function fetchHistorical() {
     try {
         const response = await fetch('/api/historical');
@@ -555,7 +481,7 @@ async function fetchHistorical() {
     }
 }
 
-// Send control command to API
+// Send Control API
 async function sendControl() {
     try {
         const response = await fetch('/api/control', {
@@ -582,7 +508,7 @@ async function sendControl() {
     }
 }
 
-// Event listeners
+// Initialize Premium Dashboard
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize theme
     initTheme();
@@ -590,11 +516,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize charts
     initCharts();
     
-    // Add initial log entry
-    addLogEntry('Dashboard initialized successfully', 'success');
-    showNotification('System Ready', 'Smart Classroom Monitoring System is online', 'success');
+    // Add initial premium log entry
+    addLogEntry('AI + IoT Command Center initialized successfully', 'success');
+    showNotification('System Ready', 'Smart Classroom AI + IoT Command Center is online', 'success');
 
-    // Start performance metrics simulation
+    // Start enhanced performance metrics
     performanceInterval = setInterval(updatePerformanceMetrics, 3000);
 
     // Fetch initial data
@@ -602,18 +528,16 @@ document.addEventListener('DOMContentLoaded', function() {
     fetchHistorical();
 
     // Set up periodic updates
-    setInterval(fetchStatus, 3000); // Update every 3 seconds
-    setInterval(fetchHistorical, 5000); // Update charts every 5 seconds
-
-    // Theme toggle
-    document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+    setInterval(fetchStatus, 3000);
+    setInterval(fetchHistorical, 5000);
 
     // Auto mode toggle
     document.getElementById('auto-mode-toggle').addEventListener('change', function() {
         autoMode = this.checked;
         const modeText = autoMode ? 'Auto' : 'Manual';
-        addLogEntry(`Automation mode changed to ${modeText}`, 'info');
+        addLogEntry(`AI Automation mode changed to ${modeText}`, 'info');
         showNotification('Mode Changed', `Switched to ${modeText} mode`, 'info');
+        document.getElementById('automation-mode').textContent = modeText;
         sendControl();
     });
 

@@ -7,6 +7,8 @@ from datetime import datetime
 import random
 import json
 import os
+import math
+import time
 from config import Config
 
 app = Flask(__name__)
@@ -38,22 +40,35 @@ historical_data = {
 }
 
 def generate_demo_data():
-    """Generate simulated sensor data for demo mode"""
-    # Simulate temperature fluctuations
-    demo_state['temperature'] = round(24 + random.uniform(-2, 3), 1)
+    """Generate enhanced simulated sensor data for impressive demo mode"""
+    # Simulate more realistic temperature fluctuations with patterns
+    temp_base = 24 + math.sin(time.time() / 100) * 2  # Natural temperature variation
+    demo_state['temperature'] = round(temp_base + random.uniform(-1, 2), 1)
     
-    # Simulate humidity fluctuations
-    demo_state['humidity'] = round(55 + random.uniform(-10, 15), 1)
+    # Simulate humidity with more natural patterns
+    humidity_base = 55 + math.cos(time.time() / 150) * 10
+    demo_state['humidity'] = round(humidity_base + random.uniform(-5, 8), 1)
     
-    # Simulate random motion detection
-    demo_state['pir_motion'] = random.random() > 0.7
+    # Simulate more intelligent motion detection patterns
+    # Higher probability of motion during "daylight hours"
+    current_hour = datetime.now().hour
+    motion_probability = 0.3 if 8 <= current_hour <= 18 else 0.1  # More motion during day
     
-    # Simulate people detection (0-3 people)
+    demo_state['pir_motion'] = random.random() > (1 - motion_probability)
+    
+    # Simulate more realistic people detection
     if demo_state['pir_motion']:
-        demo_state['people_detected'] = random.randint(1, 3)
-        demo_state['occupied'] = True
-        demo_state['last_motion_time'] = datetime.now()
-        demo_state['empty_room_timer'] = 0
+        # Gradual occupancy changes for more realistic demo
+        if not demo_state['occupied']:
+            demo_state['people_detected'] = random.randint(1, 2)
+            demo_state['occupied'] = True
+            demo_state['last_motion_time'] = datetime.now()
+            demo_state['empty_room_timer'] = 0
+        else:
+            # Randomly change people count when occupied
+            if random.random() > 0.7:
+                demo_state['people_detected'] = max(1, min(3, demo_state['people_detected'] + random.choice([-1, 1])))
+            demo_state['empty_room_timer'] = 0
     else:
         demo_state['people_detected'] = 0
         demo_state['empty_room_timer'] += 1
@@ -63,11 +78,11 @@ def generate_demo_data():
         if demo_state['empty_room_timer'] > (Config.OCCUPANCY_TIMEOUT / 3):
             demo_state['occupied'] = False
     
-    # Simulate appliance control in auto mode
+    # Simulate intelligent appliance control in auto mode
     if demo_state['auto_mode']:
         if demo_state['occupied']:
             demo_state['light_on'] = True
-            # Turn on fan if temperature is high
+            # Turn on fan if temperature is high with hysteresis
             demo_state['fan_on'] = demo_state['temperature'] > Config.TEMPERATURE_THRESHOLD
         else:
             demo_state['light_on'] = False
@@ -79,9 +94,9 @@ def generate_demo_data():
     if demo_state['fan_on']:
         demo_state['fan_runtime_minutes'] += 1
     
-    # Simulate energy savings (when appliances are off in auto mode)
+    # Simulate more realistic energy savings
     if demo_state['auto_mode'] and not demo_state['occupied']:
-        demo_state['energy_saved_kwh'] += 0.001  # Small increment
+        demo_state['energy_saved_kwh'] += 0.002  # Slightly higher for impressive demo
     
     # Add to historical data (keep last 50 points)
     current_time = datetime.now().strftime('%H:%M:%S')
