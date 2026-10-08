@@ -157,7 +157,7 @@
             <!-- Status Cards -->
             <div class="status-grid">
                 <!-- Occupancy Card -->
-                <div class="card {% if demo_state['occupied'] %}occupied{% else %}unoccupied{% endif %}" id="occupancy-card">
+                <div class="card unoccupied" id="occupancy-card">
                     <div class="card-header">
                         <div class="card-title">Occupancy Status</div>
                         <div class="card-icon">
@@ -219,40 +219,36 @@
                 </div>
 
                 <!-- Light Status Card -->
-                <div class="card {% if demo_state['light_on'] %}green{% endif %}" id="light-card">
+                <div class="card" id="light-card">
                     <div class="card-header">
                         <div class="card-title">Light Status</div>
-                        <div class="card-icon {% if demo_state['light_on'] %}green{% endif %}">
+                        <div class="card-icon" id="light-icon">
                             <i data-lucide="lightbulb"></i>
                         </div>
                     </div>
                     <div class="card-value" id="light-status">--</div>
                     <div class="card-secondary">
-                        <span class="mode-badge {% if demo_state['auto_mode'] %}auto{% else %}manual{% endif %}" id="light-mode">
-                            {% if demo_state['auto_mode'] %}AUTO{% else %}MANUAL{% endif %}
-                        </span>
+                        <span class="mode-badge" id="light-mode">AUTO</span>
                     </div>
                     <div class="progress-bar">
-                        <div class="progress-fill" id="light-progress" style="width: {% if demo_state['light_on'] %}100{% else %}0{% endif %}%"></div>
+                        <div class="progress-fill" id="light-progress" style="width: 0%"></div>
                     </div>
                 </div>
 
                 <!-- Fan Status Card -->
-                <div class="card {% if demo_state['fan_on'] %}green{% endif %}" id="fan-card">
+                <div class="card" id="fan-card">
                     <div class="card-header">
                         <div class="card-title">Fan Status</div>
-                        <div class="card-icon {% if demo_state['fan_on'] %}green{% endif %}">
+                        <div class="card-icon" id="fan-icon">
                             <i data-lucide="fan"></i>
                         </div>
                     </div>
                     <div class="card-value" id="fan-status">--</div>
                     <div class="card-secondary">
-                        <span class="mode-badge {% if demo_state['auto_mode'] %}auto{% else %}manual{% endif %}" id="fan-mode">
-                            {% if demo_state['auto_mode'] %}AUTO{% else %}MANUAL{% endif %}
-                        </span>
+                        <span class="mode-badge" id="fan-mode">AUTO</span>
                     </div>
                     <div class="progress-bar">
-                        <div class="progress-fill" id="fan-progress" style="width: {% if demo_state['fan_on'] %}100{% else %}0{% endif %}%"></div>
+                        <div class="progress-fill" id="fan-progress" style="width: 0%"></div>
                     </div>
                 </div>
             </div>
@@ -287,7 +283,7 @@
                         <div style="display: flex; align-items: center; justify-content: space-between;">
                             <span class="status-label">Manual Override</span>
                             <label class="toggle-switch">
-                                <input type="checkbox" id="light-toggle" {% if demo_state['auto_mode'] %}disabled{% endif %}>
+                                <input type="checkbox" id="light-toggle" disabled>
                                 <span class="toggle-slider"></span>
                             </label>
                         </div>
@@ -303,7 +299,7 @@
                         <div style="display: flex; align-items: center; justify-content: space-between;">
                             <span class="status-label">Manual Override</span>
                             <label class="toggle-switch">
-                                <input type="checkbox" id="fan-toggle" {% if demo_state['auto_mode'] %}disabled{% endif %}>
+                                <input type="checkbox" id="fan-toggle" disabled>
                                 <span class="toggle-slider"></span>
                             </label>
                         </div>
